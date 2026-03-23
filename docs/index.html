@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Gallery</h1>
+            <p>A tagged image gallery</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search images...">
+            </div>
+            
+            <div class="tag-filter">
+                <h3>Tags</h3>
+                <div class="tag-list">
+                    
+                    <button class="tag-btn" data-tag="demo">demo</button>
+                    
+                    <button class="tag-btn" data-tag="example">example</button>
+                    
+                    <button class="tag-btn" data-tag="landscape">landscape</button>
+                    
+                    <button class="tag-btn" data-tag="portrait">portrait</button>
+                    
+                </div>
+                <button id="clearFilter" class="clear-btn">Clear All</button>
+            </div>
+        </div>
+
+        <main class="gallery">
+            
+            <div class="image-card" data-tags="example,demo,landscape" data-title="example image 1" data-description="this is an example image">
+                <div class="image-container">
+                    <img src="../images/example1.jpg" alt="Example Image 1">
+                </div>
+                <div class="image-info">
+                    <h3>Example Image 1</h3>
+                    <p>This is an example image</p>
+                    <div class="tags">
+                        
+                        <span class="tag">example</span>
+                        
+                        <span class="tag">demo</span>
+                        
+                        <span class="tag">landscape</span>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="image-card" data-tags="example,demo,portrait" data-title="example image 2" data-description="another example image">
+                <div class="image-container">
+                    <img src="../images/example2.jpg" alt="Example Image 2">
+                </div>
+                <div class="image-info">
+                    <h3>Example Image 2</h3>
+                    <p>Another example image</p>
+                    <div class="tags">
+                        
+                        <span class="tag">example</span>
+                        
+                        <span class="tag">demo</span>
+                        
+                        <span class="tag">portrait</span>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+
+    <script src="gallery.js"></script>
+</body>
+</html>
