@@ -1,0 +1,58 @@
+name: Build gallery
+
+on:
+  push:
+    paths:
+      - "docs/images/**"
+      - "templates/**"
+      - "build.py"
+      - "tags_config.json"
+      - "style.css"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-gallery
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build site
+        run: |
+          python build.py
+
+      - name: Commit generated site (docs/)
+        run: |
+          # If build produced no changes, exit cleanly
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/
+          git commit -m "chore: rebuild gallery"
+          git push
