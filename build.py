@@ -1,117 +1,142 @@
 #!/usr/bin/env python3
 """
-Build script to generate static HTML gallery from metadata.json
+Static site generator for tagged image gallery
+Tags: Read from .txt files with same name as image
+Date: Extracted from first 19 characters of filename (YYYY-MM-DD_HH-MM-SS)
 """
 
 import json
 import os
 from pathlib import Path
-from jinja2 import Template
+from datetime import datetime
+from jinja2 import Environment, FileSystemLoader
 
 # Configuration
-IMAGES_DIR = Path("images")
-METADATA_FILE = Path("metadata.json")
-DOCS_DIR = Path("docs")
+CONFIG = {
+    'images_dir': 'images',
+    'output_dir': 'docs',
+    'template_dir': 'templates',
+}
 
-def load_metadata():
-    """Load metadata from JSON file"""
-    with open(METADATA_FILE, 'r') as f:
-        return json.load(f)
+def extract_datetime_from_filename(filename):
+    """
+    Extract datetime from first 19 characters of filename
+    Format: YYYY-MM-DD_HH-MM-SS
+    Example: 2026-03-23_14-30-45_my-photo.jpg -> 2026-03-23_14-30-45
+    """
+    # Remove extension and get base name
+    base = Path(filename).stem
+    
+    # Extract first 19 characters
+    if len(base) >= 19:
+        datetime_str = base[:19]
+        # Validate format: YYYY-MM-DD_HH-MM-SS
+        try:
+            # Replace underscores and dashes to parse
+            normalized = datetime_str.replace('_', '-').replace('-', ' ', 2)  # Keep date dashes, convert time dashes
+            # Actually, let's just validate the pattern
+            parts = datetime_str.split('_')
+            if len(parts) == 2:
+                date_part = parts[0]  # YYYY-MM-DD
+                time_part = parts[1]  # HH-MM-SS
+                
+                # Validate date format
+                datetime.strptime(date_part, '%Y-%m-%d')
+                # Validate time format
+                datetime.strptime(time_part, '%H-%M-%S')
+                
+                return datetime_str
+        except ValueError:
+            pass
+    
+    return None
+
+def load_tags_from_txt(txt_file):
+    """Load tags from a .txt file"""
+    tags = []
+    try:
+        with open(txt_file, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            if content:
+                # Split by comma and strip whitespace
+                tags = [tag.strip() for tag in content.split(',') if tag.strip()]
+    except FileNotFoundError:
+        pass
+    return tags
+
+def load_image_metadata():
+    """Load metadata from image filenames and .txt files"""
+    images = []
+    images_path = Path(CONFIG['images_dir'])
+    
+    # Supported image extensions
+    img_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'}
+    
+    # Find all image files
+    for img_file in sorted(images_path.iterdir()):
+        if img_file.suffix.lower() in img_extensions:
+            filename = img_file.name
+            
+            # Extract datetime from filename
+            datetime_str = extract_datetime_from_filename(filename)
+            
+            if not datetime_str:
+                print(f"⚠️  Skipping {filename} - filename doesn't start with YYYY-MM-DD_HH-MM-SS format")
+                continue
+            
+            # Load tags from corresponding .txt file
+            txt_file = img_file.with_suffix('.txt')
+            tags = load_tags_from_txt(txt_file)
+            
+            # Create image metadata
+            metadata = {
+                'filename': filename,
+                'date_added': datetime_str,
+                'tags': tags
+            }
+            
+            images.append(metadata)
+            print(f"✅ Loaded {filename} | Date: {datetime_str} | Tags: {', '.join(tags) if tags else 'None'}")
+    
+    return images
 
 def get_all_tags(images):
     """Extract all unique tags from images"""
     tags = set()
-    for image in images:
-        tags.update(image.get('tags', []))
+    for img in images:
+        tags.update(img.get('tags', []))
     return sorted(list(tags))
 
-def generate_index(data):
-    """Generate main index.html"""
-    images = data['images']
-    tags = get_all_tags(images)
-    
-    html_template = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ site_title }}</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>{{ site_title }}</h1>
-            <p>{{ site_description }}</p>
-        </header>
-
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search images...">
-            </div>
-            
-            <div class="tag-filter">
-                <h3>Tags</h3>
-                <div class="tag-list">
-                    {% for tag in tags %}
-                    <button class="tag-btn" data-tag="{{ tag }}">{{ tag }}</button>
-                    {% endfor %}
-                </div>
-                <button id="clearFilter" class="clear-btn">Clear All</button>
-            </div>
-        </div>
-
-        <main class="gallery">
-            {% for image in images %}
-            <div class="image-card" data-tags="{{ image.tags|join(',') }}" data-title="{{ image.title|lower }}" data-description="{{ image.description|lower }}">
-                <div class="image-container">
-                    <img src="../images/{{ image.filename }}" alt="{{ image.title }}">
-                </div>
-                <div class="image-info">
-                    <h3>{{ image.title }}</h3>
-                    <p>{{ image.description }}</p>
-                    <div class="tags">
-                        {% for tag in image.tags %}
-                        <span class="tag">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </main>
-    </div>
-
-    <script src="gallery.js"></script>
-</body>
-</html>'''
-    
-    template = Template(html_template)
-    html_content = template.render(
-        site_title=data.get('site_title', 'Image Gallery'),
-        site_description=data.get('site_description', 'A tagged image gallery'),
-        images=images,
-        tags=tags
-    )
-    
-    output_file = DOCS_DIR / "index.html"
-    output_file.write_text(html_content)
-    print(f"✓ Generated {output_file}")
-
-def main():
-    """Main build function"""
-    print("Building gallery...")
-    
-    # Create docs directory if it doesn't exist
-    DOCS_DIR.mkdir(exist_ok=True)
+def generate_site():
+    """Generate static HTML site"""
+    # Create output directory
+    os.makedirs(CONFIG['output_dir'], exist_ok=True)
     
     # Load metadata
-    data = load_metadata()
+    images = load_image_metadata()
+    all_tags = get_all_tags(images)
     
-    # Generate HTML
-    generate_index(data)
+    if not images:
+        print("❌ No images found with valid filenames (YYYY-MM-DD_HH-MM-SS format)")
+        return
     
-    print("✓ Gallery built successfully!")
-    print(f"  Output: {DOCS_DIR}/")
+    # Setup Jinja2
+    env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
+    
+    # Generate index page
+    template = env.get_template('index.html')
+    html = template.render(
+        images=images,
+        all_tags=all_tags,
+        total_images=len(images)
+    )
+    
+    with open(os.path.join(CONFIG['output_dir'], 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(html)
+    
+    print(f"\n✅ Generated gallery with {len(images)} images")
+    print(f"📝 Found {len(all_tags)} unique tags")
+    print(f"📁 Output saved to {CONFIG['output_dir']}/")
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    generate_site()

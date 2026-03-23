@@ -9,73 +9,442 @@
 <body>
     <div class="container">
         <header>
-            <h1>Image Gallery</h1>
-            <p>A tagged image gallery</p>
+            <h1>🖼️ Tagged Image Gallery</h1>
+            <p class="subtitle">3 images • 80 tags</p>
         </header>
 
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search images...">
-            </div>
-            
-            <div class="tag-filter">
-                <h3>Tags</h3>
-                <div class="tag-list">
-                    
-                    <button class="tag-btn" data-tag="demo">demo</button>
-                    
-                    <button class="tag-btn" data-tag="example">example</button>
-                    
-                    <button class="tag-btn" data-tag="landscape">landscape</button>
-                    
-                    <button class="tag-btn" data-tag="portrait">portrait</button>
-                    
-                </div>
-                <button id="clearFilter" class="clear-btn">Clear All</button>
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search images by tags..." class="search-box">
+            <div id="tagFilter" class="tag-filter">
+                
+                <button class="tag-btn" data-tag="1boy">1boy</button>
+                
+                <button class="tag-btn" data-tag="1girl">1girl</button>
+                
+                <button class="tag-btn" data-tag="animal_ears">animal_ears</button>
+                
+                <button class="tag-btn" data-tag="bag">bag</button>
+                
+                <button class="tag-btn" data-tag="black_eyes">black_eyes</button>
+                
+                <button class="tag-btn" data-tag="black_gloves">black_gloves</button>
+                
+                <button class="tag-btn" data-tag="black_hair">black_hair</button>
+                
+                <button class="tag-btn" data-tag="black_hoodie">black_hoodie</button>
+                
+                <button class="tag-btn" data-tag="black_pants">black_pants</button>
+                
+                <button class="tag-btn" data-tag="black_shirt">black_shirt</button>
+                
+                <button class="tag-btn" data-tag="blue_eyes">blue_eyes</button>
+                
+                <button class="tag-btn" data-tag="bow">bow</button>
+                
+                <button class="tag-btn" data-tag="brown_background">brown_background</button>
+                
+                <button class="tag-btn" data-tag="brown_eyes">brown_eyes</button>
+                
+                <button class="tag-btn" data-tag="cat_ears">cat_ears</button>
+                
+                <button class="tag-btn" data-tag="cat_tail">cat_tail</button>
+                
+                <button class="tag-btn" data-tag="closed_mouth">closed_mouth</button>
+                
+                <button class="tag-btn" data-tag="colored_sclera">colored_sclera</button>
+                
+                <button class="tag-btn" data-tag="colored_skin">colored_skin</button>
+                
+                <button class="tag-btn" data-tag="faux_traditional_media">faux_traditional_media</button>
+                
+                <button class="tag-btn" data-tag="fins">fins</button>
+                
+                <button class="tag-btn" data-tag="fish_tail">fish_tail</button>
+                
+                <button class="tag-btn" data-tag="floral_print">floral_print</button>
+                
+                <button class="tag-btn" data-tag="full_body">full_body</button>
+                
+                <button class="tag-btn" data-tag="furry">furry</button>
+                
+                <button class="tag-btn" data-tag="furry_female">furry_female</button>
+                
+                <button class="tag-btn" data-tag="furry_male">furry_male</button>
+                
+                <button class="tag-btn" data-tag="gloves">gloves</button>
+                
+                <button class="tag-btn" data-tag="grey_background">grey_background</button>
+                
+                <button class="tag-btn" data-tag="grey_footwear">grey_footwear</button>
+                
+                <button class="tag-btn" data-tag="hakama">hakama</button>
+                
+                <button class="tag-btn" data-tag="hakama_skirt">hakama_skirt</button>
+                
+                <button class="tag-btn" data-tag="holding">holding</button>
+                
+                <button class="tag-btn" data-tag="holding_smoking_pipe">holding_smoking_pipe</button>
+                
+                <button class="tag-btn" data-tag="hood">hood</button>
+                
+                <button class="tag-btn" data-tag="hoodie">hoodie</button>
+                
+                <button class="tag-btn" data-tag="japanese_clothes">japanese_clothes</button>
+                
+                <button class="tag-btn" data-tag="katana">katana</button>
+                
+                <button class="tag-btn" data-tag="kimono">kimono</button>
+                
+                <button class="tag-btn" data-tag="lips">lips</button>
+                
+                <button class="tag-btn" data-tag="looking_at_viewer">looking_at_viewer</button>
+                
+                <button class="tag-btn" data-tag="male_focus">male_focus</button>
+                
+                <button class="tag-btn" data-tag="male_underwear">male_underwear</button>
+                
+                <button class="tag-btn" data-tag="multiple_views">multiple_views</button>
+                
+                <button class="tag-btn" data-tag="muscular">muscular</button>
+                
+                <button class="tag-btn" data-tag="no_humans">no_humans</button>
+                
+                <button class="tag-btn" data-tag="pants">pants</button>
+                
+                <button class="tag-btn" data-tag="pillarboxed">pillarboxed</button>
+                
+                <button class="tag-btn" data-tag="pink_hair">pink_hair</button>
+                
+                <button class="tag-btn" data-tag="portrait">portrait</button>
+                
+                <button class="tag-btn" data-tag="realistic">realistic</button>
+                
+                <button class="tag-btn" data-tag="red_bow">red_bow</button>
+                
+                <button class="tag-btn" data-tag="sandals">sandals</button>
+                
+                <button class="tag-btn" data-tag="shark">shark</button>
+                
+                <button class="tag-btn" data-tag="shark_tail">shark_tail</button>
+                
+                <button class="tag-btn" data-tag="sheath">sheath</button>
+                
+                <button class="tag-btn" data-tag="sheathed">sheathed</button>
+                
+                <button class="tag-btn" data-tag="shirt">shirt</button>
+                
+                <button class="tag-btn" data-tag="shoes">shoes</button>
+                
+                <button class="tag-btn" data-tag="short_eyebrows">short_eyebrows</button>
+                
+                <button class="tag-btn" data-tag="short_hair">short_hair</button>
+                
+                <button class="tag-btn" data-tag="simple_background">simple_background</button>
+                
+                <button class="tag-btn" data-tag="sketch">sketch</button>
+                
+                <button class="tag-btn" data-tag="skirt">skirt</button>
+                
+                <button class="tag-btn" data-tag="smile">smile</button>
+                
+                <button class="tag-btn" data-tag="smoke">smoke</button>
+                
+                <button class="tag-btn" data-tag="smoking">smoking</button>
+                
+                <button class="tag-btn" data-tag="smoking_pipe">smoking_pipe</button>
+                
+                <button class="tag-btn" data-tag="sneakers">sneakers</button>
+                
+                <button class="tag-btn" data-tag="solo">solo</button>
+                
+                <button class="tag-btn" data-tag="standing">standing</button>
+                
+                <button class="tag-btn" data-tag="sword">sword</button>
+                
+                <button class="tag-btn" data-tag="tail">tail</button>
+                
+                <button class="tag-btn" data-tag="underwear">underwear</button>
+                
+                <button class="tag-btn" data-tag="weapon">weapon</button>
+                
+                <button class="tag-btn" data-tag="weapon_on_back">weapon_on_back</button>
+                
+                <button class="tag-btn" data-tag="whiskers">whiskers</button>
+                
+                <button class="tag-btn" data-tag="white_background">white_background</button>
+                
+                <button class="tag-btn" data-tag="wide_sleeves">wide_sleeves</button>
+                
+                <button class="tag-btn" data-tag="wings">wings</button>
+                
             </div>
         </div>
 
-        <main class="gallery">
+        <div id="gallery" class="gallery">
             
-            <div class="image-card" data-tags="example,demo,landscape" data-title="example image 1" data-description="this is an example image">
+            <div class="gallery-item" data-tags="solo black_hair short_hair 1girl portrait pillarboxed faux_traditional_media smile realistic closed_mouth brown_eyes lips brown_background shirt 1boy black_shirt male_focus solo black_hair short_hair 1girl portrait pillarboxed faux_traditional_media smile realistic closed_mouth brown_eyes lips brown_background shirt 1boy black_shirt male_focus">
                 <div class="image-container">
-                    <img src="../images/example1.jpg" alt="Example Image 1">
-                </div>
-                <div class="image-info">
-                    <h3>Example Image 1</h3>
-                    <p>This is an example image</p>
-                    <div class="tags">
-                        
-                        <span class="tag">example</span>
-                        
-                        <span class="tag">demo</span>
-                        
-                        <span class="tag">landscape</span>
-                        
+                    <img src="../images/2026-01-18_23-29-52.png" alt="2026-01-18_23-29-52.png" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="image-meta">
+                            <p class="date">📅 2026-01-18_23-29-52</p>
+                            
+                            <div class="tags">
+                                
+                                <span class="tag">solo</span>
+                                
+                                <span class="tag">black_hair</span>
+                                
+                                <span class="tag">short_hair</span>
+                                
+                                <span class="tag">1girl</span>
+                                
+                                <span class="tag">portrait</span>
+                                
+                                <span class="tag">pillarboxed</span>
+                                
+                                <span class="tag">faux_traditional_media</span>
+                                
+                                <span class="tag">smile</span>
+                                
+                                <span class="tag">realistic</span>
+                                
+                                <span class="tag">closed_mouth</span>
+                                
+                                <span class="tag">brown_eyes</span>
+                                
+                                <span class="tag">lips</span>
+                                
+                                <span class="tag">brown_background</span>
+                                
+                                <span class="tag">shirt</span>
+                                
+                                <span class="tag">1boy</span>
+                                
+                                <span class="tag">black_shirt</span>
+                                
+                                <span class="tag">male_focus</span>
+                                
+                                <span class="tag">solo</span>
+                                
+                                <span class="tag">black_hair</span>
+                                
+                                <span class="tag">short_hair</span>
+                                
+                                <span class="tag">1girl</span>
+                                
+                                <span class="tag">portrait</span>
+                                
+                                <span class="tag">pillarboxed</span>
+                                
+                                <span class="tag">faux_traditional_media</span>
+                                
+                                <span class="tag">smile</span>
+                                
+                                <span class="tag">realistic</span>
+                                
+                                <span class="tag">closed_mouth</span>
+                                
+                                <span class="tag">brown_eyes</span>
+                                
+                                <span class="tag">lips</span>
+                                
+                                <span class="tag">brown_background</span>
+                                
+                                <span class="tag">shirt</span>
+                                
+                                <span class="tag">1boy</span>
+                                
+                                <span class="tag">black_shirt</span>
+                                
+                                <span class="tag">male_focus</span>
+                                
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="image-card" data-tags="example,demo,portrait" data-title="example image 2" data-description="another example image">
+            <div class="gallery-item" data-tags="furry weapon sword japanese_clothes grey_background smoking_pipe katana sheathed simple_background red_bow bow whiskers solo furry_female skirt colored_sclera sandals smoke blue_eyes hakama floral_print smoking weapon_on_back wings full_body sheath holding tail kimono short_eyebrows animal_ears cat_ears no_humans 1girl cat_tail looking_at_viewer pink_hair holding_smoking_pipe hakama_skirt wide_sleeves">
                 <div class="image-container">
-                    <img src="../images/example2.jpg" alt="Example Image 2">
-                </div>
-                <div class="image-info">
-                    <h3>Example Image 2</h3>
-                    <p>Another example image</p>
-                    <div class="tags">
-                        
-                        <span class="tag">example</span>
-                        
-                        <span class="tag">demo</span>
-                        
-                        <span class="tag">portrait</span>
-                        
+                    <img src="../images/2026-02-15_01-47-00_cupid.png" alt="2026-02-15_01-47-00_cupid.png" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="image-meta">
+                            <p class="date">📅 2026-02-15_01-47-00</p>
+                            
+                            <div class="tags">
+                                
+                                <span class="tag">furry</span>
+                                
+                                <span class="tag">weapon</span>
+                                
+                                <span class="tag">sword</span>
+                                
+                                <span class="tag">japanese_clothes</span>
+                                
+                                <span class="tag">grey_background</span>
+                                
+                                <span class="tag">smoking_pipe</span>
+                                
+                                <span class="tag">katana</span>
+                                
+                                <span class="tag">sheathed</span>
+                                
+                                <span class="tag">simple_background</span>
+                                
+                                <span class="tag">red_bow</span>
+                                
+                                <span class="tag">bow</span>
+                                
+                                <span class="tag">whiskers</span>
+                                
+                                <span class="tag">solo</span>
+                                
+                                <span class="tag">furry_female</span>
+                                
+                                <span class="tag">skirt</span>
+                                
+                                <span class="tag">colored_sclera</span>
+                                
+                                <span class="tag">sandals</span>
+                                
+                                <span class="tag">smoke</span>
+                                
+                                <span class="tag">blue_eyes</span>
+                                
+                                <span class="tag">hakama</span>
+                                
+                                <span class="tag">floral_print</span>
+                                
+                                <span class="tag">smoking</span>
+                                
+                                <span class="tag">weapon_on_back</span>
+                                
+                                <span class="tag">wings</span>
+                                
+                                <span class="tag">full_body</span>
+                                
+                                <span class="tag">sheath</span>
+                                
+                                <span class="tag">holding</span>
+                                
+                                <span class="tag">tail</span>
+                                
+                                <span class="tag">kimono</span>
+                                
+                                <span class="tag">short_eyebrows</span>
+                                
+                                <span class="tag">animal_ears</span>
+                                
+                                <span class="tag">cat_ears</span>
+                                
+                                <span class="tag">no_humans</span>
+                                
+                                <span class="tag">1girl</span>
+                                
+                                <span class="tag">cat_tail</span>
+                                
+                                <span class="tag">looking_at_viewer</span>
+                                
+                                <span class="tag">pink_hair</span>
+                                
+                                <span class="tag">holding_smoking_pipe</span>
+                                
+                                <span class="tag">hakama_skirt</span>
+                                
+                                <span class="tag">wide_sleeves</span>
+                                
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
             </div>
             
-        </main>
+            <div class="gallery-item" data-tags="1boy hoodie male_focus shoes hood pants black_hoodie shark_tail gloves furry black_pants underwear fish_tail black_gloves furry_male sneakers tail muscular sketch male_underwear standing full_body fins white_background shark black_eyes colored_skin simple_background multiple_views bag grey_footwear">
+                <div class="image-container">
+                    <img src="../images/2026-02-27_00-51-32.png" alt="2026-02-27_00-51-32.png" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="image-meta">
+                            <p class="date">📅 2026-02-27_00-51-32</p>
+                            
+                            <div class="tags">
+                                
+                                <span class="tag">1boy</span>
+                                
+                                <span class="tag">hoodie</span>
+                                
+                                <span class="tag">male_focus</span>
+                                
+                                <span class="tag">shoes</span>
+                                
+                                <span class="tag">hood</span>
+                                
+                                <span class="tag">pants</span>
+                                
+                                <span class="tag">black_hoodie</span>
+                                
+                                <span class="tag">shark_tail</span>
+                                
+                                <span class="tag">gloves</span>
+                                
+                                <span class="tag">furry</span>
+                                
+                                <span class="tag">black_pants</span>
+                                
+                                <span class="tag">underwear</span>
+                                
+                                <span class="tag">fish_tail</span>
+                                
+                                <span class="tag">black_gloves</span>
+                                
+                                <span class="tag">furry_male</span>
+                                
+                                <span class="tag">sneakers</span>
+                                
+                                <span class="tag">tail</span>
+                                
+                                <span class="tag">muscular</span>
+                                
+                                <span class="tag">sketch</span>
+                                
+                                <span class="tag">male_underwear</span>
+                                
+                                <span class="tag">standing</span>
+                                
+                                <span class="tag">full_body</span>
+                                
+                                <span class="tag">fins</span>
+                                
+                                <span class="tag">white_background</span>
+                                
+                                <span class="tag">shark</span>
+                                
+                                <span class="tag">black_eyes</span>
+                                
+                                <span class="tag">colored_skin</span>
+                                
+                                <span class="tag">simple_background</span>
+                                
+                                <span class="tag">multiple_views</span>
+                                
+                                <span class="tag">bag</span>
+                                
+                                <span class="tag">grey_footwear</span>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <footer>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
     </div>
 
     <script src="gallery.js"></script>

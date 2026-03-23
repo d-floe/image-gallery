@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ Tagged Image Gallery</h1>
+            <p class="subtitle">{{ total_images }} images • {{ all_tags|length }} tags</p>
+        </header>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search images by tags..." class="search-box">
+            <div id="tagFilter" class="tag-filter">
+                {% for tag in all_tags %}
+                <button class="tag-btn" data-tag="{{ tag }}">{{ tag }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="gallery" class="gallery">
+            {% for image in images %}
+            <div class="gallery-item" data-tags="{{ image.tags|join(' ')|lower }}">
+                <div class="image-container">
+                    <img src="../images/{{ image.filename }}" alt="{{ image.filename }}" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="image-meta">
+                            <p class="date">📅 {{ image.date_added }}</p>
+                            {% if image.tags %}
+                            <div class="tags">
+                                {% for tag in image.tags %}
+                                <span class="tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+
+    <script src="gallery.js"></script>
+</body>
+</html>
