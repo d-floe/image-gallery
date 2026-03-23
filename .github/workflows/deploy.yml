@@ -22,8 +22,9 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -40,7 +41,7 @@ jobs:
         run: |
           python build.py
 
-      # Publish the CONTENTS of ./docs to gh-pages branch
+      # Publish the CONTENTS of ./docs to the gh-pages branch root
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
