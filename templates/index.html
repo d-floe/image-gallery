@@ -77,6 +77,7 @@
     </div>
 
     <script>
+        // ==================== NSFW Filter ====================
         const hideNSCheckbox = document.getElementById('hideNS');
         const galleryItems = document.querySelectorAll('.gallery-item');
 
@@ -94,6 +95,109 @@
         
         // Run on page load
         filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `tags/${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
