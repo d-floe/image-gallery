@@ -19,7 +19,7 @@ import math
 
 # Configuration
 CONFIG = {
-    'images_dir': 'images',
+    'images_dir': 'docs/images',
     'output_dir': 'docs',
     'template_dir': 'templates',
     'images_per_page': 20,
@@ -261,7 +261,7 @@ def cleanup_orphaned_files(images, all_tags_list):
 
 def generate_image_page(env, image, all_images, all_tags_dict):
     """Generate individual image page"""
-    template = env.get_template('image.html')
+    template = env.get_template('item.html')
     
     # Find previous and next images
     image_index = next(i for i, img in enumerate(all_images) if img['slug'] == image['slug'])
@@ -276,7 +276,7 @@ def generate_image_page(env, image, all_images, all_tags_dict):
     )
     
     # Create image page directory
-    image_dir = Path(CONFIG['output_dir']) / 'images'
+    image_dir = Path(CONFIG['output_dir']) / 'items'
     image_dir.mkdir(exist_ok=True)
     
     output_file = image_dir / f"{image['slug']}.html"
