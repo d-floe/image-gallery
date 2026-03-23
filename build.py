@@ -22,7 +22,7 @@ CONFIG = {
     'images_dir': 'docs/images',
     'output_dir': 'docs',
     'template_dir': 'templates',
-    'images_per_page': 20,
+    'images_per_page': 50,
     'thumbnail_size': (300, 300),  # Width x Height for thumbnails
     'thumbnail_dir': 'thumbnails',  # Subdirectory in docs for thumbnails
 }
