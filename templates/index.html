@@ -23,7 +23,7 @@
                         {% if image.tags %}
                         <div class="tags">
                             {% for tag in image.tags[:3] %}
-                            <span class="tag">{{ tag }}</span>
+                            <a href="tags/{{ url_encode_tag(tag) }}.html" class="tag">{{ tag }}</a>
                             {% endfor %}
                             {% if image.tags|length > 3 %}
                             <span class="tag">+{{ image.tags|length - 3 }}</span>

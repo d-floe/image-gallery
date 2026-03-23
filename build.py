@@ -23,11 +23,14 @@ CONFIG = {
 
 def extract_datetime_from_filename(filename):
     """
-    Extract datetime from first 19 characters of filename
-    Format: YYYY-MM-DD_HH-MM-SS
+    Extract datetime from filename
+    Formats supported:
+    - YYYY-MM-DD (just date)
+    - YYYY-MM-DD_HH-MM-SS (date and time)
     """
     base = Path(filename).stem
     
+    # Try full datetime format first (YYYY-MM-DD_HH-MM-SS = 19 chars)
     if len(base) >= 19:
         datetime_str = base[:19]
         try:
@@ -40,6 +43,15 @@ def extract_datetime_from_filename(filename):
                 datetime.strptime(time_part, '%H-%M-%S')
                 
                 return datetime_str
+        except ValueError:
+            pass
+    
+    # Try date-only format (YYYY-MM-DD = 10 chars)
+    if len(base) >= 10:
+        datetime_str = base[:10]
+        try:
+            datetime.strptime(datetime_str, '%Y-%m-%d')
+            return datetime_str
         except ValueError:
             pass
     
@@ -75,7 +87,7 @@ def load_image_metadata():
             datetime_str = extract_datetime_from_filename(filename)
             
             if not datetime_str:
-                print(f"⚠️  Skipping {filename} - filename doesn't start with YYYY-MM-DD_HH-MM-SS format")
+                print(f"⚠️  Skipping {filename} - filename doesn't start with YYYY-MM-DD or YYYY-MM-DD_HH-MM-SS format")
                 continue
             
             txt_file = img_file.with_suffix('.txt')
@@ -173,7 +185,7 @@ def generate_site():
     all_tags_dict = {tag: count for tag, count in all_tags_list}
     
     if not images:
-        print("❌ No images found with valid filenames (YYYY-MM-DD_HH-MM-SS format)")
+        print("❌ No images found with valid filenames (YYYY-MM-DD or YYYY-MM-DD_HH-MM-SS format)")
         return
     
     # Setup Jinja2
