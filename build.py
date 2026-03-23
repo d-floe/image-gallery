@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 from datetime import datetime
+from urllib.parse import quote
 from jinja2 import Environment, FileSystemLoader
 
 # Configuration
@@ -55,6 +56,10 @@ def load_tags_from_txt(txt_file):
     except FileNotFoundError:
         pass
     return tags
+
+def url_encode_tag(tag):
+    """URL encode tag name for safe file paths"""
+    return quote(tag.replace(' ', '_').lower(), safe='')
 
 def load_image_metadata():
     """Load metadata from image filenames and .txt files"""
@@ -138,8 +143,8 @@ def generate_tag_page(env, tag, tagged_images):
     tag_dir = Path(CONFIG['output_dir']) / 'tags'
     tag_dir.mkdir(exist_ok=True)
     
-    # Slugify tag for URL (replace spaces with underscores)
-    tag_slug = tag.replace(' ', '_').lower()
+    # URL encode tag for safe filename
+    tag_slug = url_encode_tag(tag)
     output_file = tag_dir / f"{tag_slug}.html"
     
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -173,6 +178,8 @@ def generate_site():
     
     # Setup Jinja2
     env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
+    # Register url_encode_tag as a global function in Jinja2
+    env.globals['url_encode_tag'] = url_encode_tag
     
     # Generate homepage
     print("\n📄 Generating homepage...")
