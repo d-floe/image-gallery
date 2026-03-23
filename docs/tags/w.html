@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag: w</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="../index.html">floebooru</a></h1>
+            <p class="subtitle">Tag: <strong>w</strong> (3 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="gallery" id="gallery">
+            
+            <a href="../items/2020-01-13_shae_apricot7.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),shepiu,1girl,fish_tail,hoodie,shark_tail,solo,skirt,shark_girl,blonde_hair,tail,fins,hood,blue_skirt,black_background,green_hoodie,black_eyes,thighhighs,hand_in_pocket,white_hoodie,open_mouth,full_body,outline,long_hair,white_outline,pleated_skirt,smile,black_thighhighs,blush,long_sleeves,simple_background,looking_at_viewer,w,v,head_fins,hood_down"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2020-01-13_shae_apricot7.jpg" alt="2020-01-13_shae_apricot7" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2020-01-13</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">shepiu</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+33</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2019-12-01_jess_sumi.html" class="gallery-item" 
+               data-tags="sumi_ezaki_(d-floe),poiboi_png,1girl,solo,mask,horns,single_glove,shoes,black_hair,thighhighs,red_hoodie,black_eyes,gloves,mouth_mask,shorts,short_hair,looking_at_viewer,v,hood,sneakers,black_thighhighs,red_footwear,red_jacket,fingerless_gloves,eyeshadow,jacket,w,makeup,floral_print,oni,on_one_knee,pouch,pillarboxed,full_body,black_gloves,hoodie,long_sleeves,white_background,black_shorts,skin-covered_horns,hood_down,squatting"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2019-12-01_jess_sumi.jpg" alt="2019-12-01_jess_sumi" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-12-01</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">sumi_ezaki_(d-floe)</span>
+                            
+                            <span class="tag">poiboi_png</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2019-10-07_shae_apricot.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),shepiu,1girl,blonde_hair,solo,hat,long_hair,black_eyes,witch_hat,jewelry,looking_at_viewer,necklace,open_mouth,witch,smile,dress,long_sleeves,outline,round_image,white_outline,upper_body,green_ribbon,ribbon,chibi,border,w,black_headwear,swept_bangs,hat_ribbon,green_background,pendant,:d"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2019-10-07_shae_apricot.jpg" alt="2019-10-07_shae_apricot" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-10-07</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">shepiu</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+29</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- Pagination -->
+        
+
+        <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

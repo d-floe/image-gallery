@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag: blue_sailor_collar</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="../index.html">floebooru</a></h1>
+            <p class="subtitle">Tag: <strong>blue_sailor_collar</strong> (3 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="gallery" id="gallery">
+            
+            <a href="../items/2019-11-11_master_sgt_mine_apricot3.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),master_sgt_mine,skirt,blue_skirt,sharp_teeth,multiple_girls,zombie,..,thick_eyebrows,pantyhose,spoken_ellipsis,teeth,sailor_collar,hoodie,hood_down,blood_on_clothes,hood,short_eyebrows,pleated_skirt,blonde_hair,eyepatch,white_background,english_text,shirt,blood,hair_between_eyes,blue_sailor_collar,flying_sweatdrops,long_sleeves,blue_hair,+++,long_hair,serafuku,tail,black_skirt,black_hair,o_o,tears,4girls,shoes,blue_shirt,red_necktie"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2019-11-11_master_sgt_mine_apricot3.jpg" alt="2019-11-11_master_sgt_mine_apricot3" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-11-11</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">master_sgt_mine</span>
+                            
+                            <span class="tag">skirt</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2019-04-13_master_sgt_mine_apricot2.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),master_sgt_mine,hoodie,skirt,multiple_girls,hood,4girls,hood_down,blue_skirt,closed_eyes,fish_tail,smile,shirt,blonde_hair,white_background,blue_hair,heart,pantyhose,shadow,shark_tail,standing_on_one_leg,short_eyebrows,pleated_skirt,sailor_collar,thick_eyebrows,white_hoodie,long_sleeves,musical_note,tail,black_hair,hair_between_eyes,:d,standing,serafuku,fins,drawstring,sleeves_past_wrists,eighth_note,puffy_long_sleeves,black_hoodie,school_uniform,blue_sailor_collar"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2019-04-13_master_sgt_mine_apricot2.jpg" alt="2019-04-13_master_sgt_mine_apricot2" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-04-13</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">master_sgt_mine</span>
+                            
+                            <span class="tag">hoodie</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2017-07-16_02-34-56_nimuuu.html" class="gallery-item" 
+               data-tags="d-floe,1girl,subtitled,blonde_hair,retro_artstyle,solo,long_hair,looking_at_viewer,english_text,serafuku,school_uniform,purple_eyes,1980s_(style),neckerchief,open_mouth,long_sleeves,1990s_(style),purple_neckerchief,ahoge,sailor_collar,sleeves_past_wrists,fake_screenshot,upper_body,blue_sailor_collar,letterboxed,white_shirt,film_grain,shirt,style_parody,apricot_(d-floe)"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2017-07-16_02-34-56_nimuuu.jpg" alt="2017-07-16_02-34-56_nimuuu" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2017-07-16_02-34-56</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">d-floe</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            <span class="tag">subtitled</span>
+                            
+                            
+                            <span class="tag">+27</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- Pagination -->
+        
+
+        <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

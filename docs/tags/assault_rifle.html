@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag: assault_rifle</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="../index.html">floebooru</a></h1>
+            <p class="subtitle">Tag: <strong>assault_rifle</strong> (3 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="gallery" id="gallery">
+            
+            <a href="../items/2018-03-11_marp_apricot3.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),marp,weapon,assault_rifle,multiple_girls,rifle,gun,2girls,uniform,m4_carbine,blonde_hair,tail,helmet,load_bearing_vest,flashlight,gloves,military,fish_tail,white_hair,watch,military_uniform,magazine_(weapon),plate_carrier,fins,bulletproof_vest,holding_weapon,headset,horns,shark_tail,short_hair,ar-15,shark_girl,holding_gun,h&k_hk416,tactical_clothes,combat_helmet,ear_protection,holding,headphones,trigger_discipline,open_mouth,walkie-talkie"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2018-03-11_marp_apricot3.jpg" alt="2018-03-11_marp_apricot3" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2018-03-11</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">marp</span>
+                            
+                            <span class="tag">weapon</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2018-02-13_yickythepickle_apricot.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),yickythepickle,multiple_girls,weapon,multiple_boys,gun,uniform,flag,smile,boots,black_hair,green_pants,grey_hair,blue_eyes,holding_weapon,rifle,orange_hair,horns,holding,pants,military_uniform,short_hair,sitting,holding_gun,blue_pants,helmet,military,shirt,3girls,3boys,closed_mouth,4girls,virtual_youtuber,assault_rifle,2boys,necktie,grey_footwear,grin,mole,brown_footwear,jacket,outdoors"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2018-02-13_yickythepickle_apricot.jpg" alt="2018-02-13_yickythepickle_apricot" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2018-02-13</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">yickythepickle</span>
+                            
+                            <span class="tag">multiple_girls</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2018-02-05_marp_apricot2.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),marp,1girl,weapon,rifle,solo,assault_rifle,camouflage,blonde_hair,gun,load_bearing_vest,holding,brown_pants,holding_weapon,gloves,shark_girl,purple_eyes,brown_jacket,tactical_clothes,open_mouth,military,fins,body_armor,brown_gloves,ar-15,fish_tail,pants,holding_gun,military_operator,smile,camouflage_pants,grey_background,simple_background,trigger_discipline,military_uniform,pouch,m4_carbine,bulletproof_vest,tail,scope,long_sleeves,ammunition_pouch"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2018-02-05_marp_apricot2.jpg" alt="2018-02-05_marp_apricot2" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2018-02-05</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">marp</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+39</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- Pagination -->
+        
+
+        <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag: finger_in_another's_mouth</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="../index.html">floebooru</a></h1>
+            <p class="subtitle">Tag: <strong>finger_in_another's_mouth</strong> (3 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="gallery" id="gallery">
+            
+            <a href="../items/2019-11-27_12-05-35_aagdgdg.html" class="gallery-item" 
+               data-tags="d-floe,sumi_ezaki_(d-floe),1girl,1boy,hetero,cum,penis,sex,breasts,fellatio,horns,vaginal,makeup,oral,nipples,eyeshadow,uncensored,cum_in_mouth,cum_in_pussy,short_hair,nude,facial,black_hair,testicles,cum_on_breasts,oni,cum_on_body,comic,pussy,eyeliner,open_mouth,medium_breasts,completely_nude,skin-covered_horns,bob_cut,cum_overflow,finger_in_another's_mouth,black_eyes,hand_on_another's_head,irrumatio,blush,tongue,nsfw"
+               data-ns="true">
+                <div class="image-container">
+                    <img src="../thumbnails/2019-11-27_12-05-35_aagdgdg.jpg" alt="2019-11-27_12-05-35_aagdgdg" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-11-27_12-05-35</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">d-floe</span>
+                            
+                            <span class="tag">sumi_ezaki_(d-floe)</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+40</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2019-03-09_japvs_apricot.html" class="gallery-item" 
+               data-tags="apricot_(d-floe),japvs,1girl,blonde_hair,shark_girl,fins,teeth,sharp_teeth,blue_skirt,skirt,fish_tail,tail,open_mouth,long_hair,head_fins,shark_tail,long_sleeves,grey_background,black_eyes,flat_color,finger_in_another's_mouth,simple_background,green_shirt,solo,twitter_username,shirt,raglan_sleeves"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2019-03-09_japvs_apricot.jpg" alt="2019-03-09_japvs_apricot" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2019-03-09</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">apricot_(d-floe)</span>
+                            
+                            <span class="tag">japvs</span>
+                            
+                            <span class="tag">1girl</span>
+                            
+                            
+                            <span class="tag">+24</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+            <a href="../items/2018-03-23_04-21-00_kkpk.html" class="gallery-item" 
+               data-tags="1girl,finger_in_another's_mouth,one_eye_closed,blonde_hair,pov,open_mouth,saliva,looking_at_viewer,solo_focus,pov_hands,long_hair,teeth,black_background,simple_background,outline,hair_between_eyes,drooling,upper_body,white_outline,collarbone,japanese_clothes,tongue,1other,animal_ears,yellow_eyes,slit_pupils,detached_sleeves"
+               >
+                <div class="image-container">
+                    <img src="../thumbnails/2018-03-23_04-21-00_kkpk.jpg" alt="2018-03-23_04-21-00_kkpk" loading="lazy">
+                    <div class="image-overlay">
+                        <p class="date">2018-03-23_04-21-00</p>
+                        
+                        <div class="tags">
+                            
+                            <span class="tag">1girl</span>
+                            
+                            <span class="tag">finger_in_another's_mouth</span>
+                            
+                            <span class="tag">one_eye_closed</span>
+                            
+                            
+                            <span class="tag">+24</span>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- Pagination -->
+        
+
+        <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
