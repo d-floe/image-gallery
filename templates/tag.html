@@ -17,7 +17,7 @@
             {% for image in images %}
             <a href="../images/{{ image.slug }}.html" class="gallery-item">
                 <div class="image-container">
-                    <img src="../../images/{{ image.filename }}" alt="{{ image.slug }}" loading="lazy">
+                    <img src="../thumbnails/{{ image.thumbnail }}" alt="{{ image.slug }}" loading="lazy">
                     <div class="image-overlay">
                         <p class="date">{{ image.date_added }}</p>
                         {% if image.tags %}

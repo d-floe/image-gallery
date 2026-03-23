@@ -4,13 +4,14 @@ Static site generator for tagged image gallery (Booru-style)
 - Individual pages for each image with full-size view and tags
 - Tag pages showing all images with that tag
 - Homepage with recent images
+- Auto-generates thumbnails for faster loading
 """
 
 import json
 import os
 from pathlib import Path
 from datetime import datetime
-from urllib.parse import quote
+from PIL import Image
 from jinja2 import Environment, FileSystemLoader
 
 # Configuration
@@ -19,6 +20,40 @@ CONFIG = {
     'output_dir': 'docs',
     'template_dir': 'templates',
     'images_per_page': 20,
+    'thumbnail_size': (300, 300),  # Width x Height for thumbnails
+    'thumbnail_dir': 'thumbnails',  # Subdirectory in docs for thumbnails
+}
+
+# Character mappings for special characters
+CHAR_MAPPINGS = {
+    ':': 'COL',
+    '^': 'CRT',
+    '=': 'EQL',
+    '!': 'EXL',
+    '?': 'QST',
+    '#': 'HSH',
+    '@': 'AT',
+    '$': 'DLR',
+    '%': 'PCT',
+    '&': 'AMP',
+    '*': 'AST',
+    '+': 'PLS',
+    '~': 'TLD',
+    '`': 'BCK',
+    '|': 'PIP',
+    '\\': 'BSH',
+    '/': 'SLS',
+    '<': 'LT',
+    '>': 'GT',
+    '"': 'QT',
+    "'": 'APO',
+    '[': 'LBR',
+    ']': 'RBR',
+    '{': 'LCB',
+    '}': 'RCB',
+    ',': 'COM',
+    '.': 'DOT',
+    ';': 'SMC',
 }
 
 def extract_datetime_from_filename(filename):
@@ -69,9 +104,37 @@ def load_tags_from_txt(txt_file):
         pass
     return tags
 
-def url_encode_tag(tag):
-    """URL encode tag name for safe file paths"""
-    return quote(tag.replace(' ', '_').lower(), safe='')
+def tag_to_slug(tag):
+    """Convert tag name to slug using character mappings"""
+    slug = tag.replace(' ', '_').lower()
+    
+    # Replace special characters with their mappings
+    for char, replacement in CHAR_MAPPINGS.items():
+        slug = slug.replace(char, replacement)
+    
+    return slug
+
+def generate_thumbnail(image_path, thumbnail_path, size=CONFIG['thumbnail_size']):
+    """Generate a thumbnail for the image, preserving format compatibility"""
+    try:
+        img = Image.open(image_path)
+        
+        # Convert RGBA to RGB if saving as JPEG
+        if img.mode == 'RGBA':
+            # Create white background
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])  # Use alpha channel as mask
+            img = background
+        elif img.mode not in ('RGB', 'L'):
+            # Convert other modes to RGB
+            img = img.convert('RGB')
+        
+        img.thumbnail(size, Image.Resampling.LANCZOS)
+        img.save(thumbnail_path, quality=85, optimize=True)
+        return True
+    except Exception as e:
+        print(f"⚠️  Failed to generate thumbnail for {image_path}: {e}")
+        return False
 
 def load_image_metadata():
     """Load metadata from image filenames and .txt files"""
@@ -79,6 +142,10 @@ def load_image_metadata():
     images_path = Path(CONFIG['images_dir'])
     
     img_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'}
+    
+    # Create thumbnails directory
+    thumbnail_dir = Path(CONFIG['output_dir']) / CONFIG['thumbnail_dir']
+    thumbnail_dir.mkdir(parents=True, exist_ok=True)
     
     for img_file in sorted(images_path.iterdir(), reverse=True):  # Newest first
         if img_file.suffix.lower() in img_extensions:
@@ -96,9 +163,15 @@ def load_image_metadata():
             # Create slug for URL (filename without extension)
             slug = Path(filename).stem
             
+            # Generate thumbnail
+            thumb_filename = f"{slug}.jpg"
+            thumb_path = thumbnail_dir / thumb_filename
+            generate_thumbnail(str(img_file), str(thumb_path), CONFIG['thumbnail_size'])
+            
             metadata = {
                 'filename': filename,
                 'slug': slug,
+                'thumbnail': thumb_filename,
                 'date_added': datetime_str,
                 'tags': tags
             }
@@ -155,8 +228,8 @@ def generate_tag_page(env, tag, tagged_images):
     tag_dir = Path(CONFIG['output_dir']) / 'tags'
     tag_dir.mkdir(exist_ok=True)
     
-    # URL encode tag for safe filename
-    tag_slug = url_encode_tag(tag)
+    # Convert tag to slug for safe filename
+    tag_slug = tag_to_slug(tag)
     output_file = tag_dir / f"{tag_slug}.html"
     
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -190,8 +263,9 @@ def generate_site():
     
     # Setup Jinja2
     env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
-    # Register url_encode_tag as a global function in Jinja2
-    env.globals['url_encode_tag'] = url_encode_tag
+    
+    # Register tag_to_slug as a Jinja2 filter
+    env.filters['slugify'] = tag_to_slug
     
     # Generate homepage
     print("\n📄 Generating homepage...")
@@ -211,6 +285,7 @@ def generate_site():
     print(f"\n✅ Generated gallery!")
     print(f"   📸 {len(images)} image pages")
     print(f"   🏷️  {len(all_tags_list)} tag pages")
+    print(f"   📁 Thumbnails saved to {CONFIG['output_dir']}/{CONFIG['thumbnail_dir']}/")
     print(f"   📁 Output saved to {CONFIG['output_dir']}/")
 
 if __name__ == '__main__':
