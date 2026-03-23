@@ -319,6 +319,10 @@ def generate_image_page(env, image, all_images, all_tags_dict, tag_to_category):
             'category': tag_to_category.get(tag, 'default')
         })
     
+    # Sort tags by category order: artist, character, meta, then default
+    category_order = {'artist': 0, 'character': 1, 'meta': 2, 'default': 3}
+    tags_with_category.sort(key=lambda x: (category_order.get(x['category'], 999), x['name']))
+    
     html = template.render(
         image=image,
         prev_image=prev_image,

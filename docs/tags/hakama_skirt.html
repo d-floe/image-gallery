@@ -12,11 +12,19 @@
         <header>
             <h1><a href="../index.html">floebooru</a></h1>
             <p class="subtitle">Tag: <strong>hakama_skirt</strong> (4 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
         </header>
 
-        <div class="gallery">
+        <div class="gallery" id="gallery">
             
-            <a href="../items/2025-11-22_flamingjellykid_ash.html" class="gallery-item">
+            <a href="../items/2025-11-22_flamingjellykid_ash.html" class="gallery-item" 
+               data-tags="ash_sarai_(d-floe),flamingjellykid,1girl,breasts,animal_ears,mask,thighhighs,mask_on_head,tail,skirt,cleavage,solo,red_skirt,large_breasts,japanese_clothes,smile,black_thighhighs,brown_hair,thick_eyebrows,looking_at_viewer,cat_ears,fox_shadow_puppet,mismatched_eyebrows,speech_bubble,fox_mask,borrowed_character,black_kimono,hakama_short_skirt,animal_ear_fluff,cat_tail,cat_girl,short_hair,black_eyes,cat_mask,blush,hakama_skirt,hakama,zettai_ryouiki,double_fox_shadow_puppet,collarbone,kimono,artist_name"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-11-22_flamingjellykid_ash.jpg" alt="2025-11-22_flamingjellykid_ash" loading="lazy">
                     <div class="image-overlay">
@@ -30,13 +38,18 @@
                             
                             <span class="tag">1girl</span>
                             
+                            
+                            <span class="tag">+39</span>
+                            
                         </div>
                         
                     </div>
                 </div>
             </a>
             
-            <a href="../items/2025-06-16_01-47-51_ash_unknown.html" class="gallery-item">
+            <a href="../items/2025-06-16_01-47-51_ash_unknown.html" class="gallery-item" 
+               data-tags="ash_sarai_(d-floe),1girl,animal_ears,monochrome,breasts,tail,solo,greyscale,fox_ears,short_hair,japanese_clothes,large_breasts,fox_girl,ahoge,open_mouth,fox_tail,smile,hakama,skirt,thighhighs,notice_lines,hakama_skirt,miko,kimono,sketch,simple_background,thick_eyebrows,arms_behind_back,looking_at_viewer,animal_ear_fluff,white_background"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-06-16_01-47-51_ash_unknown.jpg" alt="2025-06-16_01-47-51_ash_unknown" loading="lazy">
                     <div class="image-overlay">
@@ -50,13 +63,18 @@
                             
                             <span class="tag">animal_ears</span>
                             
+                            
+                            <span class="tag">+28</span>
+                            
                         </div>
                         
                     </div>
                 </div>
             </a>
             
-            <a href="../items/2025-06-16_01-47-51.html" class="gallery-item">
+            <a href="../items/2025-06-16_01-47-51.html" class="gallery-item" 
+               data-tags="d-floe,ash_sarai_(d-floe),1girl,animal_ears,breasts,thighhighs,tail,monochrome,greyscale,solo,skirt,clothes_lift,skirt_lift,short_hair,ahoge,japanese_clothes,fang,looking_at_viewer,large_breasts,open_mouth,lifted_by_self,smile,raccoon_ears,thighs,thick_thighs,cropped_legs,hakama,cleavage,thick_eyebrows,simple_background,white_background,hakama_skirt,raccoon_tail,blush,hakama_short_skirt,:d,sketch,zettai_ryouiki,fishnets"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-06-16_01-47-51.jpg" alt="2025-06-16_01-47-51" loading="lazy">
                     <div class="image-overlay">
@@ -70,13 +88,18 @@
                             
                             <span class="tag">1girl</span>
                             
+                            
+                            <span class="tag">+36</span>
+                            
                         </div>
                         
                     </div>
                 </div>
             </a>
             
-            <a href="../items/2025-06-01_00-50-19.html" class="gallery-item">
+            <a href="../items/2025-06-01_00-50-19.html" class="gallery-item" 
+               data-tags="d-floe,ash_sarai_(d-floe),1girl,breasts,japanese_clothes,solo,black_eyes,large_breasts,ahoge,short_hair_with_long_locks,black_kimono,hakama,blush,thick_eyebrows,upper_body,sidelocks,black_hair,hair_between_eyes,kimono,pillarboxed,:3,skirt,hakama_skirt,red_hakama,smile,brown_hair,sky,smug,closed_mouth,half-closed_eyes,sun,hip_vent,looking_down"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-06-01_00-50-19.jpg" alt="2025-06-01_00-50-19" loading="lazy">
                     <div class="image-overlay">
@@ -90,6 +113,9 @@
                             
                             <span class="tag">1girl</span>
                             
+                            
+                            <span class="tag">+30</span>
+                            
                         </div>
                         
                     </div>
@@ -102,9 +128,142 @@
         
 
         <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
             <p>Built with ❤️ using Python + GitHub Pages</p>
         </footer>
     </div>
     
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

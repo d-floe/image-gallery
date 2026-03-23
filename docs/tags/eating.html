@@ -12,11 +12,19 @@
         <header>
             <h1><a href="../index.html">floebooru</a></h1>
             <p class="subtitle">Tag: <strong>eating</strong> (1 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
         </header>
 
-        <div class="gallery">
+        <div class="gallery" id="gallery">
             
-            <a href="../items/2025-10-24_23-26-06.html" class="gallery-item">
+            <a href="../items/2025-10-24_23-26-06.html" class="gallery-item" 
+               data-tags="d-floe,ash_sarai_(d-floe),chopsticks,monochrome,greyscale,eating,holding_chopsticks,solo,holding,food,blush,fish,ahoge,1girl,thick_eyebrows,upper_body,food_in_mouth,simple_background,white_background,japanese_clothes,short_eyebrows,kimono,fish_(food),^^^,long_sleeves,sketch"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-10-24_23-26-06.jpg" alt="2025-10-24_23-26-06" loading="lazy">
                     <div class="image-overlay">
@@ -30,6 +38,9 @@
                             
                             <span class="tag">chopsticks</span>
                             
+                            
+                            <span class="tag">+23</span>
+                            
                         </div>
                         
                     </div>
@@ -42,9 +53,142 @@
         
 
         <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
             <p>Built with ❤️ using Python + GitHub Pages</p>
         </footer>
     </div>
     
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

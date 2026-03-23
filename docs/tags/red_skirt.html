@@ -12,11 +12,19 @@
         <header>
             <h1><a href="../index.html">floebooru</a></h1>
             <p class="subtitle">Tag: <strong>red_skirt</strong> (2 images)</p>
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tags...">
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+            </div>
         </header>
 
-        <div class="gallery">
+        <div class="gallery" id="gallery">
             
-            <a href="../items/2025-11-22_flamingjellykid_ash.html" class="gallery-item">
+            <a href="../items/2025-11-22_flamingjellykid_ash.html" class="gallery-item" 
+               data-tags="ash_sarai_(d-floe),flamingjellykid,1girl,breasts,animal_ears,mask,thighhighs,mask_on_head,tail,skirt,cleavage,solo,red_skirt,large_breasts,japanese_clothes,smile,black_thighhighs,brown_hair,thick_eyebrows,looking_at_viewer,cat_ears,fox_shadow_puppet,mismatched_eyebrows,speech_bubble,fox_mask,borrowed_character,black_kimono,hakama_short_skirt,animal_ear_fluff,cat_tail,cat_girl,short_hair,black_eyes,cat_mask,blush,hakama_skirt,hakama,zettai_ryouiki,double_fox_shadow_puppet,collarbone,kimono,artist_name"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-11-22_flamingjellykid_ash.jpg" alt="2025-11-22_flamingjellykid_ash" loading="lazy">
                     <div class="image-overlay">
@@ -30,13 +38,18 @@
                             
                             <span class="tag">1girl</span>
                             
+                            
+                            <span class="tag">+39</span>
+                            
                         </div>
                         
                     </div>
                 </div>
             </a>
             
-            <a href="../items/2025-11-20_sillydogjoe_ash.html" class="gallery-item">
+            <a href="../items/2025-11-20_sillydogjoe_ash.html" class="gallery-item" 
+               data-tags="ash_sarai_(d-floe),1girl,breasts,thighhighs,animal_ears,tail,happy_birthday,brown_hair,solo,fox_ears,black_thighhighs,large_breasts,fox_tail,black_eyes,looking_at_viewer,japanese_clothes,fox_girl,thick_thighs,ahoge,smile,:3,short_hair_with_long_locks,borrowed_character,black_kimono,blush,skirt,thighs,closed_mouth,thick_eyebrows,collarbone,animal_ear_fluff,hair_between_eyes,long_sleeves,kimono,sidelocks,red_skirt,birthday,sitting,outline,white_outline,zettai_ryouiki,sillydogjoe"
+               >
                 <div class="image-container">
                     <img src="../thumbnails/2025-11-20_sillydogjoe_ash.jpg" alt="2025-11-20_sillydogjoe_ash" loading="lazy">
                     <div class="image-overlay">
@@ -50,6 +63,9 @@
                             
                             <span class="tag">breasts</span>
                             
+                            
+                            <span class="tag">+39</span>
+                            
                         </div>
                         
                     </div>
@@ -62,9 +78,142 @@
         
 
         <footer>
+            <!-- Toggle Button -->
+            <div class="button-group">
+                <div class="filter-controls switch">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="hideNS" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <span>Hide NSFW</span>
+            </div>
             <p>Built with ❤️ using Python + GitHub Pages</p>
         </footer>
     </div>
     
+    <script>
+        // ==================== NSFW Filter ====================
+        const hideNSCheckbox = document.getElementById('hideNS');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery() {
+            galleryItems.forEach(item => {
+                if (hideNSCheckbox.checked && item.hasAttribute('data-ns')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = '';
+                }
+            });
+        }
+
+        hideNSCheckbox.addEventListener('change', filterGallery);
+        
+        // Run on page load
+        filterGallery();
+
+        // ==================== Search & Autocomplete ====================
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        // Extract all unique tags from the gallery
+        const allTags = new Set();
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            const tags = item.getAttribute('data-tags').split(',');
+            tags.forEach(tag => {
+                if (tag.trim()) allTags.add(tag.trim());
+            });
+        });
+
+        // Convert tag to slug (same logic as build.py)
+        function tagToSlug(tag) {
+            const charMappings = {
+                ':': 'COL', '^': 'CRT', '=': 'EQL', '!': 'EXL', '?': 'QST',
+                '#': 'HSH', '@': 'AT', '$': 'DLR', '%': 'PCT', '&': 'AMP',
+                '*': 'AST', '+': 'PLS', '~': 'TLD', '`': 'BCK', '|': 'PIP',
+                '\\': 'BSH', '/': 'SLS', '<': 'LT', '>': 'GT', '"': 'QT',
+                "'": 'APO', '[': 'LBR', ']': 'RBR', '{': 'LCB', '}': 'RCB',
+                ',': 'COM', '.': 'DOT', ';': 'SMC'
+            };
+            
+            let slug = tag.replace(/ /g, '_').toLowerCase();
+            for (const [char, replacement] of Object.entries(charMappings)) {
+                slug = slug.replaceAll(char, replacement);
+            }
+            return slug;
+        }
+
+        // Navigate to tag page
+        function navigateToTag(tag) {
+            const slug = tagToSlug(tag);
+            window.location.href = `${slug}.html`;
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions() {
+            const input = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = '';
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            // Find matching tags
+            const matches = Array.from(allTags)
+                .filter(tag => tag.toLowerCase().includes(input))
+                .sort()
+                .slice(0, 8); // Limit to 8 suggestions
+            
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            
+            suggestionsBox.style.display = 'block';
+            matches.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.addEventListener('click', () => {
+                    navigateToTag(tag);
+                });
+                suggestionsBox.appendChild(div);
+            });
+        }
+
+        // Event listeners for search
+        searchInput.addEventListener('input', showSuggestions);
+
+        // Handle Enter key or click on suggestion
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = searchInput.value.toLowerCase();
+                
+                // Check for exact match first
+                const exactMatch = Array.from(allTags).find(tag => tag.toLowerCase() === input);
+                if (exactMatch) {
+                    navigateToTag(exactMatch);
+                    return;
+                }
+                
+                // Otherwise navigate to first suggestion
+                const matches = Array.from(allTags)
+                    .filter(tag => tag.toLowerCase().includes(input))
+                    .sort();
+                
+                if (matches.length > 0) {
+                    navigateToTag(matches[0]);
+                }
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
