@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ image.slug }}</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="../index.html">🖼️ Tagged Image Gallery</a></h1>
+        </header>
+
+        <div class="image-view">
+            <div class="image-display">
+                <img src="../../images/{{ image.filename }}" alt="{{ image.slug }}">
+            </div>
+
+            <div class="image-info">
+                <h2>{{ image.slug }}</h2>
+                
+                <div class="meta">
+                    <p><strong>📅 Posted:</strong> {{ image.date_added }}</p>
+                </div>
+
+                {% if image.tags %}
+                <div class="tags-section">
+                    <h3>Tags</h3>
+                    <div class="tags">
+                        {% for tag in image.tags %}
+                        <a href="../tags/{{ tag|replace(' ', '_')|lower }}.html" class="tag-link">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="navigation">
+                    {% if prev_image %}
+                    <a href="{{ prev_image.slug }}.html" class="nav-btn prev">← Previous</a>
+                    {% endif %}
+                    
+                    <a href="../index.html" class="nav-btn home">Home</a>
+                    
+                    {% if next_image %}
+                    <a href="{{ next_image.slug }}.html" class="nav-btn next">Next →</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ using Python + GitHub Pages</p>
+        </footer>
+    </div>
+</body>
+</html>

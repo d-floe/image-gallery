@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Static site generator for tagged image gallery
-Tags: Read from .txt files with same name as image
-Date: Extracted from first 19 characters of filename (YYYY-MM-DD_HH-MM-SS)
+Static site generator for tagged image gallery (Booru-style)
+- Individual pages for each image with full-size view and tags
+- Tag pages showing all images with that tag
+- Homepage with recent images
 """
 
 import json
@@ -16,33 +17,25 @@ CONFIG = {
     'images_dir': 'images',
     'output_dir': 'docs',
     'template_dir': 'templates',
+    'images_per_page': 20,
 }
 
 def extract_datetime_from_filename(filename):
     """
     Extract datetime from first 19 characters of filename
     Format: YYYY-MM-DD_HH-MM-SS
-    Example: 2026-03-23_14-30-45_my-photo.jpg -> 2026-03-23_14-30-45
     """
-    # Remove extension and get base name
     base = Path(filename).stem
     
-    # Extract first 19 characters
     if len(base) >= 19:
         datetime_str = base[:19]
-        # Validate format: YYYY-MM-DD_HH-MM-SS
         try:
-            # Replace underscores and dashes to parse
-            normalized = datetime_str.replace('_', '-').replace('-', ' ', 2)  # Keep date dashes, convert time dashes
-            # Actually, let's just validate the pattern
             parts = datetime_str.split('_')
             if len(parts) == 2:
                 date_part = parts[0]  # YYYY-MM-DD
                 time_part = parts[1]  # HH-MM-SS
                 
-                # Validate date format
                 datetime.strptime(date_part, '%Y-%m-%d')
-                # Validate time format
                 datetime.strptime(time_part, '%H-%M-%S')
                 
                 return datetime_str
@@ -58,7 +51,6 @@ def load_tags_from_txt(txt_file):
         with open(txt_file, 'r', encoding='utf-8') as f:
             content = f.read().strip()
             if content:
-                # Split by comma and strip whitespace
                 tags = [tag.strip() for tag in content.split(',') if tag.strip()]
     except FileNotFoundError:
         pass
@@ -69,28 +61,27 @@ def load_image_metadata():
     images = []
     images_path = Path(CONFIG['images_dir'])
     
-    # Supported image extensions
     img_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'}
     
-    # Find all image files
-    for img_file in sorted(images_path.iterdir()):
+    for img_file in sorted(images_path.iterdir(), reverse=True):  # Newest first
         if img_file.suffix.lower() in img_extensions:
             filename = img_file.name
             
-            # Extract datetime from filename
             datetime_str = extract_datetime_from_filename(filename)
             
             if not datetime_str:
                 print(f"⚠️  Skipping {filename} - filename doesn't start with YYYY-MM-DD_HH-MM-SS format")
                 continue
             
-            # Load tags from corresponding .txt file
             txt_file = img_file.with_suffix('.txt')
             tags = load_tags_from_txt(txt_file)
             
-            # Create image metadata
+            # Create slug for URL (filename without extension)
+            slug = Path(filename).stem
+            
             metadata = {
                 'filename': filename,
+                'slug': slug,
                 'date_added': datetime_str,
                 'tags': tags
             }
@@ -101,20 +92,80 @@ def load_image_metadata():
     return images
 
 def get_all_tags(images):
-    """Extract all unique tags from images"""
-    tags = set()
+    """Extract all unique tags and count occurrences"""
+    tag_count = {}
     for img in images:
-        tags.update(img.get('tags', []))
-    return sorted(list(tags))
+        for tag in img.get('tags', []):
+            tag_count[tag] = tag_count.get(tag, 0) + 1
+    
+    return sorted(tag_count.items())
+
+def generate_image_page(env, image, all_images, all_tags_dict):
+    """Generate individual image page"""
+    template = env.get_template('image.html')
+    
+    # Find previous and next images
+    image_index = next(i for i, img in enumerate(all_images) if img['slug'] == image['slug'])
+    prev_image = all_images[image_index + 1] if image_index + 1 < len(all_images) else None
+    next_image = all_images[image_index - 1] if image_index > 0 else None
+    
+    html = template.render(
+        image=image,
+        prev_image=prev_image,
+        next_image=next_image,
+        all_tags=all_tags_dict
+    )
+    
+    # Create image page directory
+    image_dir = Path(CONFIG['output_dir']) / 'images'
+    image_dir.mkdir(exist_ok=True)
+    
+    output_file = image_dir / f"{image['slug']}.html"
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html)
+
+def generate_tag_page(env, tag, tagged_images):
+    """Generate tag gallery page"""
+    template = env.get_template('tag.html')
+    
+    html = template.render(
+        tag=tag,
+        images=tagged_images,
+        count=len(tagged_images)
+    )
+    
+    # Create tag page directory
+    tag_dir = Path(CONFIG['output_dir']) / 'tags'
+    tag_dir.mkdir(exist_ok=True)
+    
+    # Slugify tag for URL (replace spaces with underscores)
+    tag_slug = tag.replace(' ', '_').lower()
+    output_file = tag_dir / f"{tag_slug}.html"
+    
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html)
+
+def generate_homepage(env, images):
+    """Generate homepage with recent images"""
+    template = env.get_template('index.html')
+    
+    html = template.render(
+        images=images[:CONFIG['images_per_page']],  # Show recent images
+        total_images=len(images)
+    )
+    
+    output_file = Path(CONFIG['output_dir']) / 'index.html'
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html)
 
 def generate_site():
-    """Generate static HTML site"""
-    # Create output directory
+    """Generate entire static site"""
     os.makedirs(CONFIG['output_dir'], exist_ok=True)
     
     # Load metadata
     images = load_image_metadata()
-    all_tags = get_all_tags(images)
+    all_tags_list = get_all_tags(images)
+    all_tags_dict = {tag: count for tag, count in all_tags_list}
     
     if not images:
         print("❌ No images found with valid filenames (YYYY-MM-DD_HH-MM-SS format)")
@@ -123,20 +174,25 @@ def generate_site():
     # Setup Jinja2
     env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
     
-    # Generate index page
-    template = env.get_template('index.html')
-    html = template.render(
-        images=images,
-        all_tags=all_tags,
-        total_images=len(images)
-    )
+    # Generate homepage
+    print("\n📄 Generating homepage...")
+    generate_homepage(env, images)
     
-    with open(os.path.join(CONFIG['output_dir'], 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(html)
+    # Generate individual image pages
+    print("📄 Generating image pages...")
+    for image in images:
+        generate_image_page(env, image, images, all_tags_dict)
     
-    print(f"\n✅ Generated gallery with {len(images)} images")
-    print(f"📝 Found {len(all_tags)} unique tags")
-    print(f"📁 Output saved to {CONFIG['output_dir']}/")
+    # Generate tag pages
+    print("📄 Generating tag pages...")
+    for tag, count in all_tags_list:
+        tagged_images = [img for img in images if tag in img['tags']]
+        generate_tag_page(env, tag, tagged_images)
+    
+    print(f"\n✅ Generated gallery!")
+    print(f"   📸 {len(images)} image pages")
+    print(f"   🏷️  {len(all_tags_list)} tag pages")
+    print(f"   📁 Output saved to {CONFIG['output_dir']}/")
 
 if __name__ == '__main__':
     generate_site()

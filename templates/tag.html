@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tag: {{ tag }}</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><a href="index.html">🖼️ Tagged Image Gallery</a></h1>
-            <p class="subtitle">{{ total_images }} images</p>
+            <h1><a href="../index.html">🖼️ Tagged Image Gallery</a></h1>
+            <p class="subtitle">Tag: <strong>{{ tag }}</strong> ({{ count }} images)</p>
         </header>
 
         <div class="gallery">
             {% for image in images %}
-            <a href="images/{{ image.slug }}.html" class="gallery-item">
+            <a href="../images/{{ image.slug }}.html" class="gallery-item">
                 <div class="image-container">
-                    <img src="../images/{{ image.filename }}" alt="{{ image.slug }}" loading="lazy">
+                    <img src="../../images/{{ image.filename }}" alt="{{ image.slug }}" loading="lazy">
                     <div class="image-overlay">
                         <p class="date">{{ image.date_added }}</p>
                         {% if image.tags %}
                         <div class="tags">
-                            {% for tag in image.tags[:3] %}
-                            <span class="tag">{{ tag }}</span>
+                            {% for t in image.tags[:3] %}
+                            <span class="tag">{{ t }}</span>
                             {% endfor %}
-                            {% if image.tags|length > 3 %}
-                            <span class="tag">+{{ image.tags|length - 3 }}</span>
-                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
