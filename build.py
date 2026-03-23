@@ -5,6 +5,8 @@ Static site generator for tagged image gallery (Booru-style)
 - Tag pages showing all images with that tag
 - Homepage with recent images
 - Auto-generates thumbnails for faster loading
+- Pagination for gallery views
+- Cleanup of orphaned files
 """
 
 import json
@@ -13,6 +15,7 @@ from pathlib import Path
 from datetime import datetime
 from PIL import Image
 from jinja2 import Environment, FileSystemLoader
+import math
 
 # Configuration
 CONFIG = {
@@ -190,6 +193,72 @@ def get_all_tags(images):
     
     return sorted(tag_count.items())
 
+def cleanup_orphaned_files(images, all_tags_list):
+    """Remove HTML pages and thumbnails that are no longer needed"""
+    output_dir = Path(CONFIG['output_dir'])
+    
+    # Track files that should exist
+    valid_files = set()
+    
+    # Add homepage pages
+    items_per_page = CONFIG['images_per_page']
+    total_pages = math.ceil(len(images) / items_per_page)
+    for page_num in range(1, total_pages + 1):
+        if page_num == 1:
+            valid_files.add('index.html')
+        else:
+            valid_files.add(f'page_{page_num}.html')
+    
+    # Add image pages
+    for image in images:
+        valid_files.add(f'images/{image["slug"]}.html')
+    
+    # Add tag pages
+    for tag, _ in all_tags_list:
+        tag_slug = tag_to_slug(tag)
+        tagged_count = sum(1 for img in images if tag in img['tags'])
+        tag_pages = math.ceil(tagged_count / items_per_page)
+        
+        for page_num in range(1, tag_pages + 1):
+            if page_num == 1:
+                valid_files.add(f'tags/{tag_slug}.html')
+            else:
+                valid_files.add(f'tags/{tag_slug}_page_{page_num}.html')
+    
+    # Add valid thumbnails
+    valid_thumbnails = set()
+    for image in images:
+        valid_thumbnails.add(image['thumbnail'])
+    
+    # Remove orphaned HTML files
+    images_dir = output_dir / 'images'
+    if images_dir.exists():
+        for html_file in images_dir.glob('*.html'):
+            if html_file.name not in [f.split('/')[-1] for f in valid_files if f.startswith('images/')]:
+                print(f"🗑️  Removing orphaned image page: {html_file.name}")
+                html_file.unlink()
+    
+    tags_dir = output_dir / 'tags'
+    if tags_dir.exists():
+        for html_file in tags_dir.glob('*.html'):
+            if html_file.name not in [f.split('/')[-1] for f in valid_files if f.startswith('tags/')]:
+                print(f"🗑️  Removing orphaned tag page: {html_file.name}")
+                html_file.unlink()
+    
+    # Remove orphaned homepage pages
+    for html_file in output_dir.glob('page_*.html'):
+        if html_file.name not in valid_files:
+            print(f"🗑️  Removing orphaned homepage page: {html_file.name}")
+            html_file.unlink()
+    
+    # Remove orphaned thumbnails
+    thumbnail_dir = output_dir / CONFIG['thumbnail_dir']
+    if thumbnail_dir.exists():
+        for thumb_file in thumbnail_dir.glob('*.jpg'):
+            if thumb_file.name not in valid_thumbnails:
+                print(f"🗑️  Removing orphaned thumbnail: {thumb_file.name}")
+                thumb_file.unlink()
+
 def generate_image_page(env, image, all_images, all_tags_dict):
     """Generate individual image page"""
     template = env.get_template('image.html')
@@ -214,39 +283,69 @@ def generate_image_page(env, image, all_images, all_tags_dict):
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html)
 
-def generate_tag_page(env, tag, tagged_images):
-    """Generate tag gallery page"""
-    template = env.get_template('tag.html')
+def generate_tag_pages(env, tag, tagged_images):
+    """Generate paginated tag gallery pages"""
+    items_per_page = CONFIG['images_per_page']
+    total_pages = math.ceil(len(tagged_images) / items_per_page)
     
-    html = template.render(
-        tag=tag,
-        images=tagged_images,
-        count=len(tagged_images)
-    )
+    template = env.get_template('tag.html')
     
     # Create tag page directory
     tag_dir = Path(CONFIG['output_dir']) / 'tags'
     tag_dir.mkdir(exist_ok=True)
     
-    # Convert tag to slug for safe filename
     tag_slug = tag_to_slug(tag)
-    output_file = tag_dir / f"{tag_slug}.html"
     
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(html)
+    for page_num in range(1, total_pages + 1):
+        start_idx = (page_num - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        page_images = tagged_images[start_idx:end_idx]
+        
+        html = template.render(
+            tag=tag,
+            images=page_images,
+            count=len(tagged_images),
+            current_page=page_num,
+            total_pages=total_pages,
+            tag_slug=tag_slug
+        )
+        
+        # First page is index.html, others are page_2.html, page_3.html, etc.
+        if page_num == 1:
+            output_file = tag_dir / f"{tag_slug}.html"
+        else:
+            output_file = tag_dir / f"{tag_slug}_page_{page_num}.html"
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(html)
 
-def generate_homepage(env, images):
-    """Generate homepage with recent images"""
+def generate_homepage_pages(env, images):
+    """Generate paginated homepage"""
+    items_per_page = CONFIG['images_per_page']
+    total_pages = math.ceil(len(images) / items_per_page)
+    
     template = env.get_template('index.html')
     
-    html = template.render(
-        images=images[:CONFIG['images_per_page']],  # Show recent images
-        total_images=len(images)
-    )
-    
-    output_file = Path(CONFIG['output_dir']) / 'index.html'
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(html)
+    for page_num in range(1, total_pages + 1):
+        start_idx = (page_num - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        page_images = images[start_idx:end_idx]
+        
+        html = template.render(
+            images=page_images,
+            total_images=len(images),
+            current_page=page_num,
+            total_pages=total_pages
+        )
+        
+        # First page is index.html, others are page_2.html, page_3.html, etc.
+        if page_num == 1:
+            output_file = Path(CONFIG['output_dir']) / 'index.html'
+        else:
+            output_file = Path(CONFIG['output_dir']) / f'page_{page_num}.html'
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(html)
 
 def generate_site():
     """Generate entire static site"""
@@ -267,24 +366,28 @@ def generate_site():
     # Register tag_to_slug as a Jinja2 filter
     env.filters['slugify'] = tag_to_slug
     
-    # Generate homepage
+    # Generate paginated homepage
     print("\n📄 Generating homepage...")
-    generate_homepage(env, images)
+    generate_homepage_pages(env, images)
     
     # Generate individual image pages
     print("📄 Generating image pages...")
     for image in images:
         generate_image_page(env, image, images, all_tags_dict)
     
-    # Generate tag pages
+    # Generate paginated tag pages
     print("📄 Generating tag pages...")
     for tag, count in all_tags_list:
         tagged_images = [img for img in images if tag in img['tags']]
-        generate_tag_page(env, tag, tagged_images)
+        generate_tag_pages(env, tag, tagged_images)
+    
+    # Cleanup orphaned files
+    print("\n🧹 Cleaning up orphaned files...")
+    cleanup_orphaned_files(images, all_tags_list)
     
     print(f"\n✅ Generated gallery!")
     print(f"   📸 {len(images)} image pages")
-    print(f"   🏷️  {len(all_tags_list)} tag pages")
+    print(f"   🏷️  {len(all_tags_list)} tag pages (paginated)")
     print(f"   📁 Thumbnails saved to {CONFIG['output_dir']}/{CONFIG['thumbnail_dir']}/")
     print(f"   📁 Output saved to {CONFIG['output_dir']}/")
 

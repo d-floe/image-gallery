@@ -33,6 +33,23 @@
             {% endfor %}
         </div>
 
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+            <a href="{% if current_page == 2 %}{{ tag_slug }}.html{% else %}{{ tag_slug }}_page_{{ current_page - 1 }}.html{% endif %}" class="page-btn">← Previous</a>
+            {% endif %}
+
+            <div class="page-info">
+                Page {{ current_page }} of {{ total_pages }}
+            </div>
+
+            {% if current_page < total_pages %}
+            <a href="{{ tag_slug }}_page_{{ current_page + 1 }}.html" class="page-btn">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <footer>
             <p>Built with ❤️ using Python + GitHub Pages</p>
         </footer>
