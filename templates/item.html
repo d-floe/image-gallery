@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ image.slug }}</title>
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../tags_colors.css">
+    <link rel="icon" type="image/x-icon" href="/docs/favicon.ico">
 </head>
 <body>
     <div class="container">
@@ -28,8 +30,11 @@
                 <div class="tags-section">
                     <h3>Tags</h3>
                     <div class="tags">
-                        {% for tag in image.tags %}
-                        <a href="../tags/{{ tag|slugify }}.html" class="tag-link">{{ tag }}</a>
+                        {% for tag_info in tags_with_category %}
+                        <a href="../tags/{{ tag_info.name|slugify }}.html" 
+                            class="tag-link tag-category-{{ tag_info.category|slugify }}">
+                            {{ tag_info.name }}
+                        </a>
                         {% endfor %}
                     </div>
                 </div>

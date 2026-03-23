@@ -193,6 +193,49 @@ def get_all_tags(images):
     
     return sorted(tag_count.items())
 
+def load_tag_categories():
+    """Load tag categories and colors from config file"""
+    tag_to_category = {}
+    category_colors = {}
+    config_file = Path('tags_config.json')
+    
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+            for category, data in config.get('tag_categories', {}).items():
+                color = data.get('color', '#58a6ff')
+                category_colors[category] = color
+                for tag in data.get('tags', []):
+                    tag_to_category[tag] = category
+        print(f"✅ Loaded {len(tag_to_category)} tag category mappings from tags_config.json")
+    except FileNotFoundError:
+        print("⚠️  tags_config.json not found - using default colors for all tags")
+    except json.JSONDecodeError:
+        print("⚠️  Error parsing tags_config.json - using default colors for all tags")
+    
+    return tag_to_category, category_colors
+
+def generate_tag_css(category_colors):
+    """Generate CSS for tag colors based on categories"""
+    css_content = "/* Auto-generated tag color styles */\n\n"
+    
+    if not category_colors:
+        css_content += "/* No tag categories found - using default colors */\n"
+    else:
+        for category, color in category_colors.items():
+            category_slug = tag_to_slug(category)
+            css_content += f".tag-category-{category_slug} {{\n"
+            css_content += f"    background-color: {color} !important;\n"
+            css_content += f"}}\n\n"
+    
+    # Write to CSS file
+    css_file = Path(CONFIG['output_dir']) / 'tags_colors.css'
+    with open(css_file, 'w', encoding='utf-8') as f:
+        f.write(css_content)
+    
+    print(f"✅ Generated tags_colors.css ({len(category_colors)} categories)")
+    return css_file
+
 def cleanup_orphaned_files(images, all_tags_list):
     """Remove HTML pages and thumbnails that are no longer needed"""
     output_dir = Path(CONFIG['output_dir'])
@@ -259,7 +302,7 @@ def cleanup_orphaned_files(images, all_tags_list):
                 print(f"🗑️  Removing orphaned thumbnail: {thumb_file.name}")
                 thumb_file.unlink()
 
-def generate_image_page(env, image, all_images, all_tags_dict):
+def generate_image_page(env, image, all_images, all_tags_dict, tag_to_category):
     """Generate individual image page"""
     template = env.get_template('item.html')
     
@@ -268,11 +311,20 @@ def generate_image_page(env, image, all_images, all_tags_dict):
     prev_image = all_images[image_index + 1] if image_index + 1 < len(all_images) else None
     next_image = all_images[image_index - 1] if image_index > 0 else None
     
+    # Add category information to tags
+    tags_with_category = []
+    for tag in image.get('tags', []):
+        tags_with_category.append({
+            'name': tag,
+            'category': tag_to_category.get(tag, 'default')
+        })
+    
     html = template.render(
         image=image,
         prev_image=prev_image,
         next_image=next_image,
-        all_tags=all_tags_dict
+        all_tags=all_tags_dict,
+        tags_with_category=tags_with_category
     )
     
     # Create image page directory
@@ -360,6 +412,10 @@ def generate_site():
         print("❌ No images found with valid filenames (YYYY-MM-DD or YYYY-MM-DD_HH-MM-SS format)")
         return
     
+    # Load tag categories and generate CSS
+    tag_to_category, category_colors = load_tag_categories()
+    generate_tag_css(category_colors)
+    
     # Setup Jinja2
     env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
     
@@ -373,7 +429,7 @@ def generate_site():
     # Generate individual image pages
     print("📄 Generating image pages...")
     for image in images:
-        generate_image_page(env, image, images, all_tags_dict)
+        generate_image_page(env, image, images, all_tags_dict, tag_to_category)
     
     # Generate paginated tag pages
     print("📄 Generating tag pages...")

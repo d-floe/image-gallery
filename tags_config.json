@@ -1,0 +1,16 @@
+{
+  "tag_categories": {
+    "artist": {
+      "color": "#FF4444",
+      "tags": ["d-floe","flamingjellykid", "shepiu", "sillydogjoe", "avi", "spiocy"]
+    },
+    "character": {
+      "color": "#44FF44",
+      "tags": ["ash_sarai_(d-floe)", "apricot_(d-floe)", "sumi_ezaki_(d-floe)", "saka_himori_(d-floe)", "k_(spiocy)", "callus_(spiocy)", "skia", "shark-floe(d-floe)"]
+    },
+    "meta": {
+      "color": "#FFA500",
+      "tags": ["monochrome", "greyscale", "drawpile", "traditional_media"]
+    }
+  }
+}
