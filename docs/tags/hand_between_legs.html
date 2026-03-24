@@ -156,7 +156,14 @@
             });
         }
 
-        hideNSCheckbox.addEventListener('change', filterGallery);
+        // Restore saved preference (default: true = hide NSFW)
+        const savedHideNS = localStorage.getItem('hideNSFW');
+        hideNSCheckbox.checked = savedHideNS === null ? true : savedHideNS === 'true';
+
+        hideNSCheckbox.addEventListener('change', () => {
+            localStorage.setItem('hideNSFW', hideNSCheckbox.checked);
+            filterGallery();
+        });
         
         // Run on page load
         filterGallery();
