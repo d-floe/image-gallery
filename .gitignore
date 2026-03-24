@@ -39,3 +39,4 @@ Thumbs.db
 # Project specific
 .env
 .cache/
+.list.py
