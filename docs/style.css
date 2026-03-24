@@ -113,9 +113,9 @@ header h1 a:hover {
     transform: translateY(0);
 }
 
-.image-overlay .date {
+.image-overlay .title {
     font-size: 0.9em;
-    color: var(--text-secondary);
+    color: white;
     margin-bottom: 10px;
 }
 

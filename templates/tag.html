@@ -35,14 +35,14 @@
                 <div class="image-container">
                     <img src="../thumbnails/{{ image.thumbnail }}" alt="{{ image.slug }}" loading="lazy">
                     <div class="image-overlay">
-                        <p class="date">{{ image.date_added }}</p>
+                        <p class="title">{{ image_title }}</p>
                         {% if image.tags %}
                         <div class="tags">
-                            {% for t in image.tags[:3] %}
+                            {% for t in image.tags[:2] %}
                             <span class="tag">{{ t }}</span>
                             {% endfor %}
-                            {% if image.tags|length > 3 %}
-                            <span class="tag">+{{ image.tags|length - 3 }}</span>
+                            {% if image.tags|length > 2 %}
+                            <span class="tag">+{{ image.tags|length - 2 }}</span>
                             {% endif %}
                         </div>
                         {% endif %}
