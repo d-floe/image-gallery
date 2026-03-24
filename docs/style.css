@@ -278,7 +278,8 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-top: 40px;
     padding: 20px;
 }
@@ -294,10 +295,42 @@ footer {
     text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s;
+    margin: 0 6px;
 }
 
 .page-btn:hover {
     opacity: 0.8;
+}
+
+.page-num {
+    padding: 8px 12px;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95em;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.page-num:hover {
+    background-color: var(--accent);
+    color: var(--bg-dark);
+}
+
+.page-num.active {
+    background-color: var(--accent);
+    color: var(--bg-dark);
+    cursor: default;
+}
+
+.page-ellipsis {
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 0 4px;
+    user-select: none;
 }
 
 .page-info {
