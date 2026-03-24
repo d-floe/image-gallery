@@ -626,14 +626,19 @@
         const searchInput = document.getElementById('searchInput');
         const suggestionsBox = document.getElementById('suggestions');
         
-        // Extract all unique tags from the gallery
-        const allTags = new Set();
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            const tags = item.getAttribute('data-tags').split(',');
-            tags.forEach(tag => {
-                if (tag.trim()) allTags.add(tag.trim());
+        // Load all tags from tags.json for site-wide autocomplete
+        let allTags = new Set();
+        fetch('../tags.json')
+            .then(r => r.json())
+            .then(tags => { allTags = new Set(tags); })
+            .catch(() => {
+                // Fallback: extract tags from current page only
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    item.getAttribute('data-tags').split(',').forEach(tag => {
+                        if (tag.trim()) allTags.add(tag.trim());
+                    });
+                });
             });
-        });
 
         // Convert tag to slug (same logic as build.py)
         function tagToSlug(tag) {

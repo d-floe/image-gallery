@@ -415,6 +415,15 @@ def generate_tag_pages(env, tag, tagged_images):
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html)
 
+def generate_tags_json(all_tags_list):
+    """Generate JSON file with all tags for site-wide autocomplete"""
+    tags_only = [tag for tag, _count in all_tags_list]
+    json_file = Path(CONFIG['output_dir']) / 'tags.json'
+    with open(json_file, 'w', encoding='utf-8') as f:
+        json.dump(tags_only, f)
+    print(f"✅ Generated tags.json ({len(tags_only)} tags)")
+
+
 def generate_homepage_pages(env, images):
     """Generate paginated homepage"""
     items_per_page = CONFIG['images_per_page']
@@ -459,6 +468,9 @@ def generate_site():
     # Load tag categories and generate CSS
     tag_to_category, category_colors = load_tag_categories()
     generate_tag_css(category_colors)
+
+    # Generate tags JSON for site-wide autocomplete
+    generate_tags_json(all_tags_list)
     
     # Setup Jinja2
     env = Environment(loader=FileSystemLoader(CONFIG['template_dir']))
