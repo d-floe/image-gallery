@@ -10,12 +10,13 @@ Static site generator for tagged image gallery (Booru-style)
 """
 
 import json
+import math
 import os
+import re
 from pathlib import Path
 from datetime import datetime
 from PIL import Image
 from jinja2 import Environment, FileSystemLoader
-import math
 
 # Configuration
 CONFIG = {
@@ -302,6 +303,42 @@ def cleanup_orphaned_files(images, all_tags_list):
                 print(f"🗑️  Removing orphaned thumbnail: {thumb_file.name}")
                 thumb_file.unlink()
 
+def generate_title(image, tag_to_category):
+    """Generate a human-readable title from character and artist tags.
+
+    Format: "<Character1> and <Character2> by <artist>"
+    Falls back to the image slug if no relevant tags are found.
+
+    Args:
+        image (dict): Image metadata dict containing 'tags' and 'slug' keys.
+        tag_to_category (dict): Mapping of tag name to category string.
+
+    Returns:
+        str: Formatted title string, e.g. "Ash Sarai and Sumi Ezaki by d-floe".
+    """
+    character_tags = [t for t in image.get('tags', []) if tag_to_category.get(t) == 'character']
+    artist_tags = [t for t in image.get('tags', []) if tag_to_category.get(t) == 'artist']
+
+    if not character_tags and not artist_tags:
+        return image['slug']
+
+    def format_character(tag):
+        # Remove trailing _(anything) suffix, e.g. ash_sarai_(d-floe) -> ash_sarai
+        name = re.sub(r'_\([^)]*\)$', '', tag)
+        # Replace underscores with spaces and title-case
+        return name.replace('_', ' ').title()
+
+    parts = []
+    if character_tags:
+        char_names = [format_character(t) for t in character_tags]
+        parts.append(' and '.join(char_names))
+
+    if artist_tags:
+        parts.append('by ' + artist_tags[0])
+
+    return ' '.join(parts) if parts else image['slug']
+
+
 def generate_image_page(env, image, all_images, all_tags_dict, tag_to_category):
     """Generate individual image page"""
     template = env.get_template('item.html')
@@ -323,8 +360,11 @@ def generate_image_page(env, image, all_images, all_tags_dict, tag_to_category):
     category_order = {'artist': 0, 'character': 1, 'meta': 2, 'default': 3}
     tags_with_category.sort(key=lambda x: (category_order.get(x['category'], 999), x['name']))
     
+    image_title = generate_title(image, tag_to_category)
+
     html = template.render(
         image=image,
+        image_title=image_title,
         prev_image=prev_image,
         next_image=next_image,
         all_tags=all_tags_dict,
