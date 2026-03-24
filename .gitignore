@@ -40,3 +40,6 @@ Thumbs.db
 .env
 .cache/
 .list.py
+docs/items/*
+docs/tags/*
+docs/thumbnails/*
