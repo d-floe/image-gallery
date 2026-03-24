@@ -54,14 +54,34 @@
 
         <!-- Pagination -->
         {% if total_pages > 1 %}
+        {% set window_start = [current_page - 2, 1] | max %}
+        {% set window_end = [current_page + 2, total_pages] | min %}
         <div class="pagination">
             {% if current_page > 1 %}
             <a href="{% if current_page == 2 %}{{ tag_slug }}.html{% else %}{{ tag_slug }}_page_{{ current_page - 1 }}.html{% endif %}" class="page-btn">← Previous</a>
             {% endif %}
 
-            <div class="page-info">
-                Page {{ current_page }} of {{ total_pages }}
-            </div>
+            {% if window_start > 1 %}
+            <a href="{{ tag_slug }}.html" class="page-num">1</a>
+            {% if window_start > 2 %}<span class="page-ellipsis">…</span>{% endif %}
+            {% endif %}
+
+            {% for p in range(window_start, window_end + 1) %}
+            {% if current_page == p %}
+            <span class="page-num active">{{ p }}</span>
+            {% else %}
+            <a href="{% if p == 1 %}{{ tag_slug }}.html{% else %}{{ tag_slug }}_page_{{ p }}.html{% endif %}" class="page-num">{{ p }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if window_end < total_pages %}
+            {% if window_end < total_pages - 1 %}<span class="page-ellipsis">…</span>{% endif %}
+            {% if current_page == total_pages %}
+            <span class="page-num active">{{ total_pages }}</span>
+            {% else %}
+            <a href="{{ tag_slug }}_page_{{ total_pages }}.html" class="page-num">{{ total_pages }}</a>
+            {% endif %}
+            {% endif %}
 
             {% if current_page < total_pages %}
             <a href="{{ tag_slug }}_page_{{ current_page + 1 }}.html" class="page-btn">Next →</a>
