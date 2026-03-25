@@ -49,3 +49,4 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./docs
           force_orphan: true
+          cname: booru.d-floe.com
