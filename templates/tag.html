@@ -29,7 +29,7 @@
 
         <div class="gallery" id="gallery">
             {% for image in images %}
-            <a href="../items/{{ image.slug }}.html" class="gallery-item" 
+            <a href="../items/{{ image.slug }}.html" class="gallery-item{% if 'd-floe' not in image.tags %} fan-art{% endif %}" 
                data-tags="{{ image.tags|join(',') }}"
                {% if 'nsfw' in image.tags %}data-ns="true"{% endif %}>
                 <div class="image-container">
