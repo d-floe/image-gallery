@@ -133,6 +133,13 @@ def generate_thumbnail(image_path, thumbnail_path, size=CONFIG['thumbnail_size']
             # Convert other modes to RGB
             img = img.convert('RGB')
         
+        # Center-crop to 1:1 before resizing to avoid blurry wide/tall thumbnails
+        w, h = img.size
+        min_dim = min(w, h)
+        left = (w - min_dim) // 2
+        top = (h - min_dim) // 2
+        img = img.crop((left, top, left + min_dim, top + min_dim))
+
         img.thumbnail(size, Image.Resampling.LANCZOS)
         img.save(thumbnail_path, quality=85, optimize=True)
         return True
