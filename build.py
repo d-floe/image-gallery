@@ -310,6 +310,26 @@ def cleanup_orphaned_files(images, all_tags_list):
                 print(f"🗑️  Removing orphaned thumbnail: {thumb_file.name}")
                 thumb_file.unlink()
 
+def format_date(date_str):
+    """Format a date string from YYYY-MM-DD or YYYY-MM-DD_HH-MM-SS to a human-readable form.
+
+    Examples:
+        '2014-08-10'              -> 'August 10, 2014'
+        '2014-08-10_12-34-30'    -> 'August 10, 2014, 12:34:30'
+    """
+    if not date_str:
+        return date_str
+    try:
+        if len(date_str) >= 19 and '_' in date_str:
+            dt = datetime.strptime(date_str[:19], '%Y-%m-%d_%H-%M-%S')
+            return f"{dt.strftime('%B')} {dt.day}, {dt.year}, {dt.strftime('%H:%M:%S')}"
+        else:
+            dt = datetime.strptime(date_str[:10], '%Y-%m-%d')
+            return f"{dt.strftime('%B')} {dt.day}, {dt.year}"
+    except ValueError:
+        return date_str
+
+
 def generate_title(image, tag_to_category):
     """Generate a human-readable title from character and artist tags.
 
@@ -484,6 +504,7 @@ def generate_site():
     
     # Register tag_to_slug as a Jinja2 filter
     env.filters['slugify'] = tag_to_slug
+    env.filters['format_date'] = format_date
     
     # Generate paginated homepage
     print("\n📄 Generating homepage...")
