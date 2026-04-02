@@ -26,6 +26,7 @@ CONFIG = {
     'images_per_page': 50,
     'thumbnail_size': (300, 300),  # Width x Height for thumbnails
     'thumbnail_dir': 'thumbnails',  # Subdirectory in docs for thumbnails
+    'site_url': 'https://booru.d-floe.com',
 }
 
 # Character mappings for special characters
@@ -330,6 +331,25 @@ def format_date(date_str):
         return date_str
 
 
+def format_iso8601(date_str):
+    """Convert YYYY-MM-DD or YYYY-MM-DD_HH-MM-SS to ISO 8601 UTC string.
+
+    Examples:
+        '2014-08-10'              -> '2014-08-10T00:00:00.000Z'
+        '2014-08-10_12-34-30'    -> '2014-08-10T12:34:30.000Z'
+    """
+    if not date_str:
+        return date_str
+    try:
+        if len(date_str) >= 19 and '_' in date_str:
+            dt = datetime.strptime(date_str[:19], '%Y-%m-%d_%H-%M-%S')
+        else:
+            dt = datetime.strptime(date_str[:10], '%Y-%m-%d')
+        return dt.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+    except ValueError:
+        return date_str
+
+
 def generate_title(image, tag_to_category):
     """Generate a human-readable title from character and artist tags.
 
@@ -395,7 +415,8 @@ def generate_image_page(env, image, all_images, all_tags_dict, tag_to_category):
         prev_image=prev_image,
         next_image=next_image,
         all_tags=all_tags_dict,
-        tags_with_category=tags_with_category
+        tags_with_category=tags_with_category,
+        site_url=CONFIG['site_url']
     )
     
     # Create image page directory
@@ -418,6 +439,12 @@ def generate_tag_pages(env, tag, tagged_images):
     tag_dir.mkdir(exist_ok=True)
     
     tag_slug = tag_to_slug(tag)
+
+    # Find the first image without "nsfw" tag for the OG preview image
+    preview_image = next(
+        (img['filename'] for img in tagged_images if 'nsfw' not in img.get('tags', [])),
+        None
+    )
     
     for page_num in range(1, total_pages + 1):
         start_idx = (page_num - 1) * items_per_page
@@ -430,7 +457,9 @@ def generate_tag_pages(env, tag, tagged_images):
             count=len(tagged_images),
             current_page=page_num,
             total_pages=total_pages,
-            tag_slug=tag_slug
+            tag_slug=tag_slug,
+            preview_image=preview_image,
+            site_url=CONFIG['site_url']
         )
         
         # First page is index.html, others are page_2.html, page_3.html, etc.
@@ -467,7 +496,8 @@ def generate_homepage_pages(env, images):
             images=page_images,
             total_images=len(images),
             current_page=page_num,
-            total_pages=total_pages
+            total_pages=total_pages,
+            site_url=CONFIG['site_url']
         )
         
         # First page is index.html, others are page_2.html, page_3.html, etc.
@@ -505,6 +535,7 @@ def generate_site():
     # Register tag_to_slug as a Jinja2 filter
     env.filters['slugify'] = tag_to_slug
     env.filters['format_date'] = format_date
+    env.filters['iso8601_date'] = format_iso8601
     
     # Generate paginated homepage
     print("\n📄 Generating homepage...")
